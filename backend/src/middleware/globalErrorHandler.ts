@@ -13,5 +13,5 @@ export const globalErrorHandler = (
   const statusCode = err.statusCode || 500;
   const errorStack = _config.node_env === "development" ? err.stack : "";
 
-  res.status(statusCode).json({ message: message, stack: errorStack });
+  res.status(statusCode).send({ message: message, stack: errorStack });
 };
