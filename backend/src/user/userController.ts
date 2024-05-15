@@ -3,6 +3,7 @@ import userModel from "./userModel";
 import { globalErrorHandler } from "../middleware/globalErrorHandler";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
+import { validationResult } from "express-validator";
 
 import jwt from "jsonwebtoken";
 import { _config } from "../config/config";
@@ -14,6 +15,15 @@ export const register = async (
 ) => {
   try {
     const { fname, lname, email, password } = req.body;
+
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      console.log("Hello from");
+      return res
+        .status(400)
+        .send({ message: "Invalid parameters", errors: errors.array() });
+    }
 
     const isUser = await userModel.findOne({ email: email });
     console.log("isUser", isUser);
@@ -55,6 +65,14 @@ export const login = async (
 ) => {
   try {
     const { email, password } = req.body;
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .send({ message: "Invalid parameters", errors: errors.array() });
+    }
 
     const user = await userModel.findOne({ email: email });
     if (!user) {
